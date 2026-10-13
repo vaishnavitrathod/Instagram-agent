@@ -5,7 +5,8 @@ An AI agent that drafts, designs and schedules Instagram posts, with a **human a
 Describe a post (or upload your own photos), and the agent writes the caption, creates the images, and then **pauses** until you review it. Approved posts go onto a content calendar and are published automatically through the Instagram Graph API. The whole stack runs on free tiers.
 
 <!-- Add a screenshot or a short demo GIF of the dashboard here -->
-<img width="1916" height="948" alt="Screenshot 2026-10-14 041934" src="https://github.com/user-attachments/assets/864c8f73-7083-4455-9681-aacab7045336" />
+<img width="1842" height="908" alt="Screenshot 2026-10-14 044244" src="https://github.com/user-attachments/assets/d01fe693-59a8-4560-a03c-0de946e7e696" />
+
 
 
 ## Features
