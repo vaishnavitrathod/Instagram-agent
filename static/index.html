@@ -1,0 +1,383 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Post studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fffcf6;--surface:#fff;--ink:#2a2140;--mute:#6d6287;--line:#ece5f3;--pink:#f2a7bc;--pink-s:#fff0f3;--lilac-s:#f1ebff;--accent:#b9a3f5;--accent-t:#6b52c9;--on-accent:#2a2140;--phone:#2a2140;
+--bad-s:#ffd9d3;--bad-t:#8a2c1f;--ok:#9cc9ad;--ok-s:#e3f1e8;--ok-t:#2f6b4a;--warn:#e9604f;--shadow:0 14px 30px -16px #b9a3f5aa}
+@media(prefers-color-scheme:dark){:root{--bg:#150f1f;--surface:#211a31;--ink:#f3edff;--mute:#a99ec5;--line:#352b4d;--pink-s:#3d1f33;--lilac-s:#2c2552;--accent:#a99bff;--accent-t:#a99bff;--ok:#8de3c0;--on-accent:#1b1330;--phone:#0b0713;
+--bad-s:#4d231f;--bad-t:#ffb4a8;--ok-s:#1d3d33;--ok-t:#8de3c0;--shadow:0 14px 30px -16px #000a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif}
+.app{max-width:1120px;margin:0 auto;padding:28px 20px 90px}.studio{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px 36px;align-items:start}
+.main{min-width:0}.cal,.hist{margin-top:44px}
+h1,h2{font-family:'Bricolage Grotesque',Figtree,sans-serif;margin:0;letter-spacing:-.02em}
+h1{font-size:40px;font-weight:800;line-height:1.1}h2{font-size:21px;font-weight:700}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.link{color:var(--mute);font-size:14px}.mute{color:var(--mute)}
+.sr{position:absolute;left:-9999px}
+:focus-visible{outline:3px solid var(--accent-t);outline-offset:2px}
+textarea,input{font:inherit;color:inherit;background:transparent;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;width:100%}
+textarea:focus-visible,input:focus-visible{outline-offset:0}
+.composer{background:var(--surface);border:1.5px solid var(--line);border-radius:28px;padding:16px;box-shadow:var(--shadow);display:grid;gap:10px}
+.composer textarea{border:0;padding:4px;font-size:18px;resize:none;min-height:60px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.chip{font:inherit;font-size:13px;padding:6px 12px;border-radius:99px;border:1.5px solid var(--line);background:transparent;color:var(--mute);cursor:pointer;transition:border-color .15s,background .15s}
+.chip:hover{border-color:var(--pink);color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--lilac-s);border-color:var(--accent);color:var(--ink)}
+.btn{font:inherit;font-weight:600;padding:10px 20px;border-radius:99px;border:1.5px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;transition:transform .12s,background .15s}
+.btn:hover{background:var(--lilac-s)}.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--warn);border-color:transparent}
+.btn:disabled{opacity:.5;cursor:wait}
+.queue{display:grid;gap:10px;margin:20px 0 0}
+.item{display:flex;gap:12px;align-items:center;text-align:left;width:100%;font:inherit;color:inherit;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:8px 12px 8px 8px;cursor:pointer}
+.item[aria-current=true]{border-color:var(--accent);box-shadow:var(--shadow)}
+.thumb{width:52px;height:52px;border-radius:12px;background:var(--pink-s);object-fit:cover;flex:none}
+.pulse{animation:pulse 1.4s ease-in-out infinite}@keyframes pulse{50%{opacity:.45}}
+.pill{font-size:12px;font-weight:600;padding:2px 10px;border-radius:99px;background:var(--lilac-s);white-space:nowrap}
+.pill.wait{background:var(--pink-s)}.pill.bad{background:var(--bad-s);color:var(--bad-t)}.pill.ok{background:var(--ok-s);color:var(--ok-t)}
+#editor{margin-top:20px}
+.panel{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:18px;display:grid;gap:14px}
+.label{font-weight:600}
+.cap{min-height:170px;font-size:16px;line-height:1.55;resize:vertical}
+.meter{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:13px}
+.warn{background:var(--bad-s);color:var(--bad-t);border-radius:12px;padding:8px 12px;font-size:14px}
+details summary{cursor:pointer;color:var(--mute);font-size:14px}details .row{margin-top:10px}details .row input{flex:1;min-width:160px}
+.empty{color:var(--mute);padding:6px 4px}
+.stage{background:var(--pink-s);border-radius:36px;padding:26px 22px 18px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.phone{width:100%;max-width:320px;background:var(--surface);border-radius:30px;border:6px solid var(--phone);overflow:hidden;box-shadow:var(--shadow)}
+.ph-head{display:flex;align-items:center;gap:8px;padding:10px 12px;font-weight:600;font-size:13px}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--accent))}
+.ph-img{aspect-ratio:1;background:var(--lilac-s);position:relative;display:grid;place-items:center;text-align:center;color:var(--mute);font-size:13px;padding:18px}
+.ph-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:scale(1.04)}}
+.shim{position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,#ffffff77 50%,transparent 70%) 0 0/200% 100%,var(--lilac-s);animation:sh 1.4s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.ph-act{display:flex;gap:12px;padding:10px 12px 4px}
+.ph-act svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.ph-act svg:last-child{margin-left:auto}
+.ph-cap{padding:2px 12px 14px;font-size:13px;line-height:1.45;white-space:pre-wrap;word-break:break-word;min-height:44px}
+.tag{color:var(--accent-t)}.more{background:none;border:0;color:var(--mute);padding:0;font:inherit;cursor:pointer}
+.note{font-size:12px;color:var(--mute);text-align:center;margin:0;max-width:300px;min-height:18px}
+.hist-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.tile{font:inherit;color:inherit;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:0;overflow:hidden;cursor:pointer;transition:transform .15s}
+.tile:hover{transform:translateY(-3px)}.tile[aria-current=true]{border-color:var(--accent)}
+.tile img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.tile .meta{padding:8px 10px 10px;display:grid;gap:6px;font-size:13px;justify-items:start}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:grid;gap:8px;z-index:60;justify-items:center}
+.toast{background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;animation:up .25s ease;transition:opacity .3s}
+.toast.bad{background:var(--warn);color:#fff}.toast.out{opacity:0}
+@keyframes up{from{transform:translateY(12px);opacity:0}}
+.conf{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:70}
+@media(max-width:900px){.studio{grid-template-columns:1fr}h1{font-size:32px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.strip{display:flex;gap:8px;overflow-x:auto;padding:2px}
+.sl{position:relative;width:64px;height:64px;flex:none;border-radius:12px;border:2px solid var(--line);padding:0;overflow:hidden;cursor:pointer;background:none}
+.sl[aria-current=true]{border-color:var(--accent)}.sl img{width:100%;height:100%;object-fit:cover;display:block}
+.sl span{position:absolute;left:5px;bottom:3px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px #000a}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;border:0;background:#ffffffd0;color:#2a2140;font-size:18px;line-height:1;cursor:pointer;z-index:2}
+.nav.prev{left:8px}.nav.next{right:8px}
+.dots{display:flex;justify-content:center;gap:5px;padding-top:8px}.dot{width:6px;height:6px;border-radius:50%;background:var(--line)}.dot.on{background:var(--accent)}
+.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.dow{font-size:12px;color:var(--mute);text-align:center;padding-bottom:2px}
+.day{min-height:104px;min-width:0;border:1.5px solid var(--line);border-radius:14px;padding:6px;background:var(--surface);display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.day.off{opacity:.45}.day.today{border-color:var(--pink)}.day.plan{border-color:var(--accent);background:var(--lilac-s)}
+.dn{font-size:12px;font-weight:600;color:var(--mute)}
+.cp{display:flex;gap:5px;align-items:center;border:0;border-radius:8px;padding:2px 4px 2px 2px;background:var(--lilac-s);font:inherit;font-size:11px;color:var(--ink);cursor:grab;text-align:left}
+.cp.ok{background:var(--ok-s)}.cp.bad{background:var(--bad-s)}.cp.wait{background:var(--pink-s)}
+.cp[aria-current=true]{outline:2px solid var(--accent)}.cp img{width:22px;height:22px;border-radius:5px;object-fit:cover;flex:none}
+@media(max-width:700px){.day{min-height:64px;padding:4px}.cp span{display:none}}
+[hidden]{display:none!important}
+@media(min-width:901px) and (min-height:760px){.stage{position:sticky;top:20px}}
+.drop{border:2px dashed var(--line);border-radius:18px;padding:12px;display:grid;gap:10px;transition:border-color .15s,background .15s}
+.drop.over{border-color:var(--accent);background:var(--lilac-s)}
+.up{position:relative;width:72px;height:72px;flex:none;border-radius:12px;overflow:hidden}
+.up img{width:100%;height:100%;object-fit:cover;display:block}
+.up button{position:absolute;border:0;border-radius:99px;background:#000a;color:#fff;font-size:13px;line-height:1;width:20px;height:20px;padding:0;cursor:pointer}
+.up .x{top:3px;right:3px}.up .l{bottom:3px;left:3px}.up .r{bottom:3px;right:3px}
+.learn{margin:14px 4px 0;color:var(--mute);font-size:14px}.learn summary{cursor:pointer}
+.learn ol{margin:8px 0;padding-left:20px;color:var(--ink)}.learn li{margin-bottom:4px}
+/* mascot */
+.brand{display:flex;align-items:center;gap:14px}
+.mascot{display:block;flex:none}.mascot img{display:block;width:120px;height:auto}
+.mascot.big{width:fit-content;margin:0 auto 6px}.mascot.big img{width:220px}
+@media(max-width:520px){.mascot img{width:84px}.mascot.big img{width:180px}}
+/* agent activity timeline */
+.tl{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid var(--line);display:grid;gap:2px;font-size:14px}
+.tl li{position:relative;display:flex;gap:8px;align-items:baseline;padding:4px 0}
+.tl li::before{content:"";position:absolute;left:-24px;top:10px;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--surface)}
+.tl li.wait::before{background:var(--pink);animation:pulse 1.4s ease-in-out infinite}
+.tl li.you::before{background:var(--ok)}
+.tl li.bad::before{background:var(--warn)}
+.tl .d{color:var(--mute);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl .ms{margin-left:auto;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap;padding-left:8px}
+.tlbox summary{color:var(--ink);font-weight:600}
+</style></head><body>
+<div class="app">
+<div class="studio">
+<main class="main">
+  <header class="top"><div class="brand"><picture class="mascot"><source media="(prefers-reduced-motion: reduce)" srcset="/assets/cat-still.png"><img src="/assets/cat.webp" alt="" width="300" height="169"></picture><h1>Post studio</h1></div><a class="link" href="/logout">Log out</a></header>
+  <section class="composer" aria-label="New post">
+    <label class="sr" for="topic">What should the post be about?</label>
+    <textarea id="topic" rows="2" placeholder="Describe the post, for example: a motivational quote with an anime-style image"></textarea>
+    <div class="row"><div class="chips" id="format" role="group" aria-label="Post format"></div><label class="mute" id="slidesWrap" hidden>Slides <input id="slides" type="number" min="2" max="10" value="4" style="width:72px;display:inline-block"></label><span id="plan"></span></div>
+    <label class="mute" id="overlayWrap"><input id="overlay" type="checkbox" style="width:auto;display:inline-block;vertical-align:middle"> Write the text on the images</label>
+    <div id="drop" class="drop" hidden>
+      <input id="files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+      <div class="row"><button class="btn" id="pickFiles" type="button">Choose images</button><span class="mute">or drop up to 10 here. Their order is the slide order.</span></div>
+      <div class="strip" id="ups"></div>
+    </div>
+    <div class="row"><div class="chips" id="suggest"></div><button class="btn primary" id="go" type="button">Generate post</button></div>
+  </section>
+  <details class="learn" id="learn" hidden><summary id="learnSum">The agent learns your voice from the posts you approve.</summary>
+    <div id="learnList"></div>
+    <div class="row"><button class="btn danger" id="learnReset" type="button">Reset what it learned</button></div></details>
+  <section class="queue" id="queue" aria-label="In progress"></section>
+  <section id="editor" aria-live="polite"></section>
+</main>
+<aside class="stage" aria-label="Post preview">
+  <div class="phone">
+    <div class="ph-head"><span class="avatar"></span>dreamzy_ara</div>
+    <div class="ph-img" id="ph-img"></div>
+    <div class="dots" id="dots"></div>
+    <div class="ph-act" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
+    </div>
+    <div class="ph-cap" id="ph-cap"></div>
+  </div>
+  <p class="note" id="note"></p>
+</aside>
+</div>
+<section class="cal"><div class="hist-head"><h2 id="calTitle"></h2><div class="row"><button class="btn" id="calPrev" type="button" aria-label="Previous month">‹</button><button class="btn" id="calToday" type="button">Today</button><button class="btn" id="calNext" type="button" aria-label="Next month">›</button></div></div><div class="calgrid" id="cal"></div></section>
+<section class="hist"><div class="hist-head"><h2>Posts</h2><div class="chips" id="filters" style="flex:none"></div></div><div class="grid" id="grid"></div></section>
+</div>
+<div id="toasts" role="status" aria-live="polite"></div>
+<script>
+const $=s=>document.querySelector(s);
+function el(t,p={},...k){const e=document.createElement(t);for(const[a,v]of Object.entries(p)){if(a==='on')for(const[ev,f]of Object.entries(v))e.addEventListener(ev,f);else if(a==='class')e.className=v;else if(a in e)e[a]=v;else e.setAttribute(a,v)}for(const c of k.flat())if(c!=null)e.append(c);return e}
+async function api(p,b){const r=await fetch(p,b?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}:undefined);
+  if(r.status===401){location.href='/login';throw new Error('Please log in')}
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||r.statusText);return j}
+const S={runs:[],posts:[],sel:null,drafts:{},hidden:new Set(),filter:'all',more:false,sig:{},slide:0,month:new Date(),plan:null,fmt:'single'};
+const MAXC=2200,fmt=i=>new Date(i).toLocaleString([],{dateStyle:'medium',timeStyle:'short'}),
+  when=m=>new Date(Date.now()+m*60000).toLocaleString([],{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}),
+  pc=s=>({published:'ok',failed:'bad',publishing:'wait'}[s]||'');
+const SUGGEST={'Motivational quote':'A motivational quote with a soft anime-style illustration','Behind the scenes':'A behind-the-scenes look at what I am building this week','Product launch':'Announce my new project with a bold, colorful image','Weekend mood':'A cozy weekend mood post with a pastel aesthetic','Quick tip':'A quick tip people can use today, with a clean illustrated image'};
+function toast(m,k=''){const t=el('div',{class:'toast '+k,textContent:m});$('#toasts').append(t);setTimeout(()=>t.classList.add('out'),3200);setTimeout(()=>t.remove(),3600)}
+function confetti(x,y){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=['#f2a7bc','#b9a3f5','#fff0f3','#e1d8fb','#9cc9ad'];
+  for(let i=0;i<24;i++){const s=el('span',{class:'conf'});s.style.left=x+'px';s.style.top=y+'px';s.style.background=c[i%5];document.body.append(s);const a=Math.random()*Math.PI*2,d=60+Math.random()*100;
+  s.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d+40}px) rotate(${Math.random()*360}deg) scale(.6)`,opacity:0}],{duration:700+Math.random()*400,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+const btn=(label,fn,cls='')=>{const b=el('button',{class:'btn '+cls,textContent:label,type:'button'});b.addEventListener('click',async e=>{b.disabled=true;try{await fn(e)}catch(err){toast(err.message,'bad')}b.disabled=false});return b};
+const active=()=>S.runs.filter(r=>!S.hidden.has(r.thread_id));
+const selRun=()=>S.sel&&S.sel.kind==='run'?active().find(r=>r.thread_id===S.sel.id):null;
+const selPost=()=>S.sel&&S.sel.kind==='post'?S.posts.find(p=>p.id===S.sel.id):null;
+function autoSelect(){if(selRun()||selPost())return;const a=active(),w=a.find(r=>r.status==='waiting')||a[0];S.sel=w?{kind:'run',id:w.thread_id}:null}
+function pick(sel){S.sel=sel;S.more=false;S.slide=0;S.sig={};render();if(matchMedia('(max-width:900px)').matches)$('.stage').scrollIntoView({behavior:'smooth',block:'start'})}
+
+async function load(){const s=await api('/api/state');
+  const prev=Object.fromEntries(S.runs.map(r=>[r.thread_id,r.status]));
+  S.hidden=new Set([...S.hidden].filter(id=>s.runs.some(r=>r.thread_id===id)));
+  S.runs=s.runs;S.posts=s.posts;
+  for(const r of s.runs)if(prev[r.thread_id]==='working'&&!S.hidden.has(r.thread_id)){
+    if(r.status==='waiting')toast('Your post is ready to review');
+    if(r.status==='error')toast('A post could not be created','bad')}
+  autoSelect();render()}
+function render(){renderQueue();renderEditor();renderStage();renderCal();renderPlan();renderHist()}
+
+function renderQueue(){const a=active(),sig=JSON.stringify([a.map(r=>[r.thread_id,r.status,r.review&&r.review.image_url]),S.sel]);
+  if(S.sig.q===sig)return;S.sig.q=sig;
+  $('#queue').replaceChildren(...a.map(r=>{const w=r.status==='waiting';
+    return el('button',{class:'item',type:'button','aria-current':String(!!S.sel&&S.sel.id===r.thread_id),on:{click:()=>pick({kind:'run',id:r.thread_id})}},
+      w?el('img',{class:'thumb',src:r.review.image_url,alt:''}):el('div',{class:'thumb'+(r.status==='working'?' pulse':'')}),
+      el('div',{class:'clamp',style:'flex:1;min-width:0',textContent:r.topic}),
+      el('span',{class:'pill '+(w?'wait':r.status==='error'?'bad':''),textContent:{working:'Drafting',waiting:'Needs your OK',error:'Failed'}[r.status]}))}))}
+
+function ringSvg(f){const c=2*Math.PI*9,s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('width','22');s.setAttribute('height','22');
+  s.innerHTML=`<circle cx="12" cy="12" r="9" fill="none" stroke="var(--line)" stroke-width="3"/><circle cx="12" cy="12" r="9" fill="none" stroke="${f>1?'var(--warn)':'var(--accent)'}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${Math.min(f,1)*c} ${c}" transform="rotate(-90 12 12)"/>`;return s}
+const WHEN=[['now','Now'],['15','In 15 min'],['60','In 1 hour'],['tom','Tomorrow 9:00'],['pick','Pick a time']];
+function minsFor(d){if(d.when==='now')return 0;if(d.when==='pick'){const t=new Date(d.at);return isNaN(t)?0:Math.max(0,Math.round((t-Date.now())/60000))}
+  if(d.when==='tom'){const t=new Date();t.setDate(t.getDate()+1);t.setHours(9,0,0,0);return Math.max(0,Math.round((t-Date.now())/60000))}return +d.when}
+function hide(id){S.hidden.add(id);delete S.drafts[id];S.sel=null;S.sig={}}
+
+const catPic=cls=>el('picture',{class:'mascot '+(cls||'')},el('source',{media:'(prefers-reduced-motion: reduce)',srcset:'/assets/cat-still.png'}),el('img',{src:'/assets/cat.webp',alt:'',width:300,height:169}));
+const TL={draft:'Drafted caption',image:'Generated image',review:'Checked caption',approval:'Waiting for you',human:'You',redraft:'Applied your feedback',reimage:'Chose a new image prompt',removeslide:'Removed a slide',retext:'Updated slide text',schedule:'Scheduled',publish:'Published to Instagram'},
+  YOU={approve:'approved',edit:'approved with edits',reject:'asked for a rewrite',new_image:'asked for a new image',remove_slide:'removed a slide',edit_text:'edited slide text'},
+  dur=ms=>ms==null?'':ms<1000?ms+' ms':ms<60000?(ms/1000).toFixed(1)+' s':Math.floor(ms/60000)+' min '+Math.round(ms%60000/1000)+' s';
+function timeline(t,live,open){if(!t||!t.events||!t.events.length)return null;
+  const rows=t.events.map(e=>{const k=e.status==='waiting'?'wait':e.step==='human'?'you':e.status==='error'?'bad':'';
+    const label=e.step==='human'?'You '+(YOU[e.detail]||e.detail):(TL[e.step]||e.step);
+    return el('li',{class:k},el('span',{textContent:label}),e.step!=='human'&&e.detail?el('span',{class:'d',textContent:e.detail}):null,
+      el('span',{class:'ms',textContent:e.status==='waiting'?'paused':dur(e.ms)}))});
+  if(live)rows.push(el('li',{class:'wait'},el('span',{textContent:'Working…'})));
+  return el('details',{class:'tlbox',open:!!open},el('summary',{textContent:'The agent worked for '+dur(t.agent_ms)+(t.human_ms?', you took '+dur(t.human_ms):'')}),
+    el('ul',{class:'tl',style:'margin-top:12px'},rows))}
+function buildEditor(r){S.syncSlides=null;const v=r.review,id=r.thread_id,imgs=v.image_urls,n=imgs.length;let d=S.drafts[id];
+  if(!d||d.base!==v.caption)d=S.drafts[id]={base:v.caption,caption:v.caption,when:d?d.when:(S.plan?'pick':'now'),at:(d&&d.at)||(S.plan?S.plan+'T09:00':'')};
+  const cap=el('textarea',{class:'cap',value:d.caption,'aria-label':'Caption'}),meter=el('div',{class:'meter'});
+  const upd=()=>{d.caption=cap.value;const c=cap.value.length,t=(cap.value.match(/#\w+/g)||[]).length;
+    meter.replaceChildren(ringSvg(c/MAXC),`${c} of ${MAXC} characters, ${t} of 30 hashtags`);renderStage()};
+  cap.addEventListener('input',upd);
+  const whenBox=el('div',{class:'chips'}),whenTxt=el('div',{class:'meter'}),pickIn=el('input',{type:'datetime-local','aria-label':'Publish date and time',style:'max-width:240px'});
+  pickIn.addEventListener('input',()=>{d.at=pickIn.value;drawWhen()});
+  const drawWhen=()=>{whenBox.replaceChildren(...WHEN.map(([k,l])=>el('button',{class:'chip',type:'button','aria-pressed':String(d.when===k),textContent:l,on:{click:()=>{d.when=k;drawWhen()}}})));
+    if(d.when==='pick'&&!d.at){const t=new Date();t.setDate(t.getDate()+1);t.setHours(9,0,0,0);d.at=localInput(t)}
+    pickIn.hidden=d.when!=='pick';if(!pickIn.hidden)pickIn.value=d.at;
+    const m=minsFor(d),past=d.when==='pick'&&new Date(d.at)<Date.now();
+    whenTxt.textContent=past?'That time has passed, so it would publish right away.':m===0?'Publishes within seconds of approval.':'Publishes '+when(m)+'.'};
+  const approve=btn('Approve and schedule',async e=>{
+    if(!d.caption.trim())throw new Error('Write a caption first');if(d.caption.length>MAXC)throw new Error('Caption is over '+MAXC+' characters');
+    const m=minsFor(d);await api('/api/decide/'+id,{action:d.caption.trim()!==v.caption.trim()?'edit':'approve',caption:d.caption,minutes:m});
+    const b=e.currentTarget.getBoundingClientRect();confetti(b.left+b.width/2,b.top);toast(m?'Scheduled for '+when(m):'Scheduled. Publishing now.');S.plan=null;hide(id);setTimeout(loadStyle,2500);await load()},'primary');
+  const ip=el('input',{type:'text',placeholder:'Describe a different image (optional)','aria-label':'New image idea'}),sum=el('summary'),strip=el('div',{class:'strip'});
+  const drawStrip=()=>{strip.replaceChildren(...imgs.map((u,i)=>el('button',{class:'sl',type:'button','aria-current':String(i===S.slide),'aria-label':'Slide '+(i+1),on:{click:()=>{S.slide=i;renderStage()}}},el('img',{src:u,alt:''}),el('span',{textContent:String(i+1)}))));
+    sum.textContent=n>1?'Change slide '+(S.slide+1):'Change the image';fillText()};
+  S.syncSlides=drawStrip;
+  const imgRow=el('div',{class:'row'},ip,btn('Make a new image',async()=>{await api('/api/decide/'+id,{action:'new_image',slide:S.slide,image_prompt:ip.value});toast('Painting a new image');schedule();await load()}),
+    n>1?btn('Remove slide',async()=>{await api('/api/decide/'+id,{action:'remove_slide',slide:S.slide});S.slide=Math.max(0,Math.min(S.slide,n-2));toast('Slide removed');schedule();await load()},'danger'):null);
+  const texts=v.slide_texts||[],hasText=texts.some(t=>t&&(t.title||t.body));
+  const tIn=el('input',{type:'text',placeholder:'Slide headline','aria-label':'Slide headline'}),bIn=el('textarea',{rows:3,placeholder:'Slide text','aria-label':'Slide text',style:'min-height:70px'});
+  let shown=-1;const fillText=()=>{if(shown===S.slide)return;shown=S.slide;const t=texts[S.slide]||{};tIn.value=t.title||'';bIn.value=t.body||''};
+  const textBox=hasText?el('details',{},el('summary',{textContent:'Edit the text on the slide'}),el('div',{style:'display:grid;gap:8px;margin-top:8px'},tIn,bIn,
+    btn('Apply text',async()=>{await api('/api/decide/'+id,{action:'edit_text',slide:S.slide,title:tIn.value,body:bIn.value});toast('Updating the slide');schedule();await load()}))):null;
+  const fb=el('input',{type:'text',placeholder:'What should change?','aria-label':'Rewrite feedback'});
+  const panel=el('div',{class:'panel'},
+    timeline(r.timeline,false,false),
+    n>1?el('div',{class:'label',textContent:'Slides'}):null,n>1?strip:null,
+    el('label',{class:'label',textContent:'Caption'}),cap,meter,
+    v.issues.map(i=>el('div',{class:'warn',textContent:i})),
+    el('div',{class:'label',textContent:'When should it go out?'}),whenBox,pickIn,whenTxt,
+    el('div',{class:'row'},approve),
+    textBox,v.uploaded?(n>1?el('div',{class:'row'},btn('Remove this slide',async()=>{await api('/api/decide/'+id,{action:'remove_slide',slide:S.slide});S.slide=Math.max(0,Math.min(S.slide,n-2));toast('Slide removed');schedule();await load()},'danger')):null):el('details',{},sum,imgRow),
+    el('details',{},el('summary',{textContent:'Ask for a rewrite'}),el('div',{class:'row'},fb,btn('Rewrite post',async()=>{if(!fb.value.trim())throw new Error('Say what should change first');await api('/api/decide/'+id,{action:'reject',feedback:fb.value});toast('Rewriting your post');schedule();await load()}))),
+    el('div',{class:'row'},btn('Discard post',async()=>{await api('/api/decide/'+id,{action:'reject',feedback:''});hide(id);toast('Post discarded');await load()},'danger')));
+  drawWhen();drawStrip();upd();return panel}
+function postPanel(p){const n=p.image_urls.length,sch=p.status==='scheduled',at=el('input',{type:'datetime-local',value:localInput(new Date(p.publish_at)),'aria-label':'New publish time',style:'max-width:240px'});
+  return el('div',{class:'panel'},
+    el('div',{class:'row'},el('h2',{textContent:'Post '+p.id,style:'flex:1'}),el('span',{class:'pill '+pc(p.status),textContent:p.status}),
+      el('button',{class:'btn',type:'button',textContent:'Close',on:{click:()=>{S.sel=null;autoSelect();S.sig={};render()}}})),
+    el('div',{class:'meter',textContent:(n>1?'Carousel with '+n+' slides. ':'')+'Publish time: '+fmt(p.publish_at)}),
+    timeline(p.timeline,false,true),
+    p.error?el('div',{class:'warn',textContent:p.error}):null,
+    sch?el('div',{class:'row'},at,btn('Move post',async()=>{const t=new Date(at.value);if(isNaN(t))throw new Error('Pick a date and time');await api('/api/reschedule/'+p.id,{publish_at:iso(t)});toast('Moved to '+when((t-Date.now())/60000));await load()},'primary')):null,
+    sch?el('div',{class:'row'},btn('Cancel this post',async()=>{if(!confirm('Cancel this scheduled post? It will not be published.'))return;await api('/api/cancel/'+p.id,{});S.sel=null;S.sig={};toast('Post cancelled');await load()},'danger')):null,
+    p.status==='failed'?btn('Retry publishing',async()=>{await api('/api/retry/'+p.id,{});toast('Back in the queue');await load()},'primary'):null)}
+function renderEditor(){const r=selRun(),p=selPost(),
+  key=JSON.stringify([S.sel,r&&[r.status,r.error,r.review&&r.review.caption,r.review&&r.review.image_urls,r.timeline&&r.timeline.events.length],p&&[p.status,p.error,p.publish_at,p.timeline&&p.timeline.events.length]]);
+  if(S.sig.ed===key)return;S.sig.ed=key;const box=$('#editor');S.syncSlides=null;
+  if(r&&r.status==='waiting')box.replaceChildren(buildEditor(r));
+  else if(r&&r.status==='error')box.replaceChildren(el('div',{class:'panel'},el('div',{class:'warn',textContent:'This post could not be created: '+(r.error||'unknown error')}),timeline(r.timeline,false,true),el('div',{class:'row'},btn('Dismiss',async()=>{await api('/api/dismiss/'+r.thread_id,{});hide(r.thread_id);await load()},'danger'))));
+  else if(r){const t=timeline(r.timeline,true,true);box.replaceChildren(...[catPic('big'),el('p',{class:'empty',textContent:'Drafting your post. The image can take up to a minute.'}),t?el('div',{class:'panel'},t):null].filter(Boolean))}
+  else if(p)box.replaceChildren(postPanel(p));
+  else box.replaceChildren(el('p',{class:'empty',textContent:'Nothing needs your approval. Describe a post above and press Generate post.'}))}
+
+function setImg(key,build){if(S.sig.img===key)return;S.sig.img=key;$('#ph-img').replaceChildren(...build().filter(Boolean))}
+function setCap(t){const box=$('#ph-cap');if(!t){box.replaceChildren(el('span',{class:'mute',textContent:'The caption will show here.'}));return}
+  const long=t.length>125&&!S.more,shown=long?t.slice(0,125).trimEnd():t;
+  box.replaceChildren(el('b',{textContent:'dreamzy_ara '}),...shown.split(/(#\w+)/g).map(s=>s.startsWith('#')?el('span',{class:'tag',textContent:s}):s),
+    long?'… ':null,long?el('button',{class:'more',type:'button',textContent:'more',on:{click:()=>{S.more=true;renderStage()}}}):null)}
+function renderStage(){const r=selRun(),p=selPost(),txt=s=>[el('span',{style:'position:relative',textContent:s})];let urls=[],cap='',note='';
+  if(r&&r.status==='waiting'){urls=r.review.image_urls;cap=(S.drafts[r.thread_id]||{caption:r.review.caption}).caption;note='Preview only. Instagram may wrap or crop slightly differently.'}
+  else if(r&&r.status==='working')setImg('w',()=>[el('div',{class:'shim'}),...txt('Creating your post')]);
+  else if(r)setImg('e',()=>txt('This post could not be created.'));
+  else if(p){urls=p.image_urls;cap=p.caption}
+  else setImg('n',()=>txt('Your post preview appears here.'));
+  const n=urls.length;
+  if(n){S.slide=Math.max(0,Math.min(S.slide,n-1));const i=S.slide;
+    setImg('i'+urls[i]+':'+n,()=>[el('img',{src:urls[i],alt:'Slide '+(i+1)}),
+      i>0?el('button',{class:'nav prev',type:'button','aria-label':'Previous slide',textContent:'‹',on:{click:()=>{S.slide--;renderStage()}}}):null,
+      i<n-1?el('button',{class:'nav next',type:'button','aria-label':'Next slide',textContent:'›',on:{click:()=>{S.slide++;renderStage()}}}):null])}
+  $('#dots').replaceChildren(...(n>1?Array.from({length:n},(_,k)=>el('span',{class:'dot'+(k===S.slide?' on':'')})):[]));
+  if(S.syncSlides)S.syncSlides();setCap(cap);$('#note').textContent=note}
+
+function renderHist(){const f=S.filter,L=S.posts.filter(p=>f==='all'||p.status===f),ps=S.sel&&S.sel.kind==='post'?S.sel.id:null,
+  sig=JSON.stringify([f,ps,S.posts.map(p=>[p.id,p.status,p.image_url])]);if(S.sig.h===sig)return;S.sig.h=sig;
+  $('#filters').replaceChildren(...['all','scheduled','published','failed'].map(k=>el('button',{class:'chip',type:'button','aria-pressed':String(f===k),
+    textContent:k[0].toUpperCase()+k.slice(1)+' '+(k==='all'?S.posts.length:S.posts.filter(p=>p.status===k).length),on:{click:()=>{S.filter=k;S.sig.h=null;renderHist()}}})));
+  $('#grid').replaceChildren(...(L.length?L.map(p=>el('button',{class:'tile',type:'button','aria-current':String(ps===p.id),on:{click:()=>pick({kind:'post',id:p.id})}},
+    el('img',{src:p.image_url,alt:'',loading:'lazy'}),el('div',{class:'meta'},el('span',{class:'pill '+pc(p.status),textContent:p.status+(p.image_urls.length>1?', '+p.image_urls.length+' slides':'')}),el('div',{class:'clamp',textContent:p.caption})))):
+    [el('p',{class:'empty',textContent:S.posts.length?'No posts with this status.':'No posts yet. Approved posts will show up here.'})]))}
+
+const pad=n=>String(n).padStart(2,'0'),localInput=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`,
+  dkey=d=>localInput(d).slice(0,10),iso=d=>d.toISOString().slice(0,19)+'+00:00';
+function renderCal(){const m=S.month,y=m.getFullYear(),mo=m.getMonth(),
+  sig=JSON.stringify([y,mo,S.plan,S.sel,S.posts.map(p=>[p.id,p.status,p.publish_at,p.image_url])]);if(S.sig.cal===sig)return;S.sig.cal=sig;
+  $('#calTitle').textContent=m.toLocaleString([],{month:'long',year:'numeric'});
+  const start=new Date(y,mo,1-new Date(y,mo,1).getDay()),by={},today=dkey(new Date());
+  S.posts.forEach(p=>{const k=dkey(new Date(p.publish_at));(by[k]=by[k]||[]).push(p)});
+  const head=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w=>el('div',{class:'dow',textContent:w}));
+  const cells=Array.from({length:42},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);const k=dkey(d),ps=(by[k]||[]).sort((a,b)=>a.publish_at<b.publish_at?-1:1);
+    return el('div',{class:'day'+(d.getMonth()!==mo?' off':'')+(k===today?' today':'')+(S.plan===k?' plan':''),'aria-label':d.toDateString(),
+      on:{click:e=>{if(e.target.closest('.cp'))return;S.plan=S.plan===k?null:k;S.sig.cal=null;renderCal();renderPlan()},
+        dragover:e=>e.preventDefault(),
+        drop:async e=>{e.preventDefault();const p=S.posts.find(x=>x.id===+e.dataTransfer.getData('text/plain'));if(!p||p.status!=='scheduled')return;
+          const old=new Date(p.publish_at),nd=new Date(d);nd.setHours(old.getHours(),old.getMinutes(),0,0);
+          if(nd<Date.now()){toast('That time has passed. Pick a later day.','bad');return}
+          try{await api('/api/reschedule/'+p.id,{publish_at:iso(nd)});toast('Moved to '+nd.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'}));await load()}catch(err){toast(err.message,'bad')}}}},
+      el('span',{class:'dn',textContent:String(d.getDate())}),
+      ps.slice(0,3).map(p=>el('button',{class:'cp '+pc(p.status),type:'button',draggable:p.status==='scheduled',title:p.caption.slice(0,80),
+        'aria-current':String(!!S.sel&&S.sel.kind==='post'&&S.sel.id===p.id),
+        on:{click:()=>pick({kind:'post',id:p.id}),dragstart:e=>{e.dataTransfer.setData('text/plain',String(p.id));e.dataTransfer.effectAllowed='move'}}},
+        el('img',{src:p.image_url,alt:''}),el('span',{textContent:new Date(p.publish_at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}))),
+      ps.length>3?el('span',{class:'mute',style:'font-size:11px',textContent:'+'+(ps.length-3)+' more'}):null)});
+  $('#cal').replaceChildren(...head,...cells)}
+function renderPlan(){$('#plan').replaceChildren(...(S.plan?[el('button',{class:'chip',type:'button','aria-pressed':'true','aria-label':'Clear planned day',
+  textContent:'Planning for '+new Date(S.plan+'T00:00').toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})+'  ×',
+  on:{click:()=>{S.plan=null;S.sig.cal=null;renderCal();renderPlan()}}})]:[]))}
+function moveMonth(n){const m=S.month;S.month=n===0?new Date():new Date(m.getFullYear(),m.getMonth()+n,1);S.sig.cal=null;renderCal()}
+$('#calPrev').onclick=()=>moveMonth(-1);$('#calNext').onclick=()=>moveMonth(1);$('#calToday').onclick=()=>moveMonth(0);
+S.up=[];const DEFAULT_PH=$('#topic').placeholder;
+function drawUps(){$('#ups').replaceChildren(...S.up.map((u,i)=>el('div',{class:'up'},el('img',{src:u.url,alt:'Upload '+(i+1)}),
+  el('button',{type:'button',class:'x','aria-label':'Remove image '+(i+1),textContent:'×',on:{click:()=>{S.up.splice(i,1);drawUps()}}}),
+  i>0?el('button',{type:'button',class:'l','aria-label':'Move earlier',textContent:'‹',on:{click:()=>{[S.up[i-1],S.up[i]]=[S.up[i],S.up[i-1]];drawUps()}}}):null,
+  i<S.up.length-1?el('button',{type:'button',class:'r','aria-label':'Move later',textContent:'›',on:{click:()=>{[S.up[i+1],S.up[i]]=[S.up[i],S.up[i+1]];drawUps()}}}):null)))}
+async function addFiles(list){const files=[...list].filter(f=>f.type.startsWith('image/'));
+  if(!files.length){toast('Choose image files (JPEG, PNG or WebP)','bad');return}
+  if(S.up.length+files.length>10){toast('Up to 10 images per post','bad');return}
+  const fd=new FormData();files.forEach(f=>fd.append('files',f));$('#pickFiles').disabled=true;
+  try{const r=await fetch('/api/upload',{method:'POST',headers:{'X-Requested-With':'fetch'},body:fd});
+    if(r.status===401){location.href='/login';return}
+    const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||r.statusText||'Upload failed. The images may be too large');
+    S.up.push(...j.files);drawUps()}catch(e){toast(e.message,'bad')}
+  $('#pickFiles').disabled=false}
+$('#pickFiles').onclick=()=>$('#files').click();
+$('#files').onchange=e=>{addFiles(e.target.files);e.target.value=''};
+const dz=$('#drop');dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files.length)addFiles(e.dataTransfer.files)});
+function drawFormat(){const mine=S.fmt==='mine';
+  $('#format').replaceChildren(...[['single','AI image'],['carousel','AI carousel'],['mine','My own images']].map(([k,l])=>
+    el('button',{class:'chip',type:'button','aria-pressed':String(S.fmt===k),textContent:l,on:{click:()=>{S.fmt=k;if(k!=='mine')$('#overlay').checked=k==='carousel';drawFormat()}}})));
+  $('#slidesWrap').hidden=S.fmt!=='carousel';$('#overlayWrap').hidden=mine;$('#drop').hidden=!mine;$('#suggest').hidden=mine;
+  $('#go').textContent=mine?'Write caption':'Generate post';
+  $('#topic').placeholder=mine?'Optional: what is the post about? The agent also looks at your images.':DEFAULT_PH}
+drawFormat();
+async function loadStyle(){try{const s=await api('/api/style');
+  $('#learnSum').textContent=!s.enabled?'Style learning is off (LEARN_STYLE=0 in .env).':s.total?`Learned from ${s.total} approved post${s.total>1?'s':''}. ${Math.round(100*s.kept/s.total)}% were kept exactly as written.`:'The agent learns your voice from the posts you approve.';
+  $('#learnList').replaceChildren(...(s.total?[el('p',{class:'mute',textContent:'Latest examples it uses to match your style:'}),
+    el('ol',{},...s.examples.map(x=>el('li',{textContent:x.final.slice(0,140)+(x.final.length>140?'…':'')+(x.edited?'  (you edited this one)':'')})))]:[]));
+  $('#learn').hidden=false}catch(e){}}
+$('#learnReset').onclick=async()=>{if(!confirm('Forget everything it learned from your approved posts?'))return;
+  try{await api('/api/style/reset',{});toast('Style memory cleared');loadStyle()}catch(e){toast(e.message,'bad')}};
+let timer;function schedule(){clearTimeout(timer);const busy=S.runs.some(r=>r.status==='working');
+  timer=setTimeout(async()=>{if(!document.hidden)await load().catch(()=>{});schedule()},busy?3000:10000)}
+async function generate(){const t=$('#topic').value.trim(),mine=S.fmt==='mine';
+  if(mine&&!S.up.length){toast('Add at least one image first','bad');return}
+  if(!mine&&!t){toast('Describe the post first','bad');return}
+  const b=$('#go'),slides=S.fmt==='carousel'?Math.max(2,Math.min(10,+$('#slides').value||4)):1;b.disabled=true;
+  try{const j=await api('/api/new',mine?{topic:t,uploads:S.up.map(u=>u.name)}:{topic:t,slides,overlay:$('#overlay').checked});$('#topic').value='';if(mine){S.up=[];drawUps()}
+    S.sel={kind:'run',id:j.thread_id};S.more=false;S.slide=0;S.sig={};
+    toast(mine?'Writing your caption':slides>1?'Drafting your carousel. Each slide takes a moment':'Drafting your post');await load()}catch(e){toast(e.message,'bad')}
+  b.disabled=false;schedule()}
+$('#suggest').replaceChildren(...Object.keys(SUGGEST).map(k=>el('button',{class:'chip',type:'button',textContent:k,on:{click:()=>{$('#topic').value=SUGGEST[k];$('#topic').focus()}}})));
+$('#go').onclick=generate;
+$('#topic').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();generate()}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)load().catch(()=>{})});
+loadStyle();load().catch(()=>{});schedule();
+</script></body></html>

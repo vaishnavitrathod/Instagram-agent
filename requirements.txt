@@ -1,0 +1,9 @@
+langgraph>=0.6
+langgraph-checkpoint-sqlite
+pillow
+cloudinary
+requests
+python-dotenv
+# Only if you switch providers in .env:
+#   pip install langchain-anthropic   (TEXT_PROVIDER=claude)
+#   pip install openai                (IMAGE_PROVIDERS=openai)
