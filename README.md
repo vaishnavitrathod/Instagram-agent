@@ -177,3 +177,8 @@ static/         The dashboard (index.html)
 | `No module named ...` | The virtual environment is not active. Run `.venv\Scripts\Activate.ps1` |
 | Scheduled post did not go out | `DRY_RUN` is `1`, the app is not running, or the PC is asleep |
 | Everything shows "deleted" after Sync | The listing failed or `IG_USER_ID` points at a different account. Check `.env` |
+
+## License
+ 
+  Licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+  Free for personal, educational and other noncommercial use.
